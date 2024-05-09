@@ -4,7 +4,7 @@ class Database{
     private $db_username="root";
     private $db_password="";
     private $db_database="school";
-    private $conn=false;
+    private $conn=true;
     private $result=[];
     private $mysqli="";
 
