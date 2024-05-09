@@ -10,7 +10,7 @@ class Database{
 
     public function __construct(){
        if(!$this->conn){
-        $this->mysqli=new connect($this->db_host,$this->db_username,$this->db_password,$this->db_database);
+        $this->mysqli=new mysqli($this->db_host,$this->db_username,$this->db_password,$this->db_database);
         if($this->mysqli->connect_error){
             array_push($this->result,$this->mysqli->connect_error);
             return false;
