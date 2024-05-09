@@ -29,7 +29,7 @@ class Database{
 
             $sql="INSERT INTO $tableName ($tablekeys) VALUES ('$tablevalues')";
             $data=$this->mysqli->query($sql);
-            if($data){
+            if($this->mysqli->affected_rows>0){
               array_push($this->result,$this->mysqli->insert_id);
               return true;
             }else{
