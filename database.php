@@ -40,6 +40,33 @@ class Database{
         }
 
     }
+
+    public function update($tablename,$params=array(),$where=null){
+        if($this->tableExist($tablename)){
+            // echo "<pre>";
+            // print_r($params);
+            $args=[];
+            foreach($params as $key=>$value){
+                $args[]="$key = '$value'";
+            }
+           $sql="UPDATE $tablename SET ". implode(", ",$args);
+
+           if($where != null){
+            $sql .= " WHERE $where";
+           }
+
+          if($this->mysqli->query($sql)){
+            array_push($this->result,$this->mysqli->affected_rows);
+            return true;
+          }
+          else{
+            array_push($this->result,$this->mysqli->error);
+            return false;
+          }
+        }else{
+            array_push($this->result,$this->mysqli->error);
+        }
+    }
     public function getResult(){
         $val=$this->result;
         $this->result=array();
