@@ -15,8 +15,10 @@ $obj=new Database();
 // echo "<pre>";
 // print_r($obj->getResult());
 
-$obj->select("student","*",null,null,null,1);
-echo "<pre>";
-print_r($obj->getResult());
-echo "</pre>";
+// $obj->select("student","*",null,null,null,3);
+// echo "<pre>";
+// print_r($obj->getResult());
+// echo "</pre>";
+
+$obj->pagination("student",null,null,10);
 ?>

@@ -113,6 +113,101 @@ class Database{
             return false;
         }
     }
+    // public function pagination(string $tablename,string $row="*",string $where=null,string $join=null,string $order=null,$limit=null){
+    //     if($this->tableExist($tablename)){
+    //         $sql="SELECT $row from $tablename";
+    //         if($where!=null){
+    //             $sql .= " WHERE $where";
+    //         }
+    //         if($join!=null){
+    //             $sql .= " JOIN $join";
+    //         }
+    //         if($order!=null){
+    //             $sql .= " ORDER BY $order ";
+    //         }
+    //         if($limit != null){
+    //             if(isset($_GET['page'])){
+    //                 $pageno=$_GET['page'];
+    //             }else{
+    //                 $pageno=1;
+    //             }
+    //             $start=($pageno-1)*$limit;
+    //             $sql .= " LIMIT $start,$limit";
+    //         }
+    //         $data=$this->mysqli->query($sql);
+    //         if($data){
+    //             array_push($this->result,$data->fetch_all(MYSQLI_ASSOC));
+    //             return true;
+    //         }else{
+    //             array_push($this->result,$this->mysqli->error);
+    //             return false;
+    //         }
+    //         return true;
+    //     }
+    //     else{
+    //         return false;
+    //     }
+    // }
+
+    public function pagination($tablename,$where=null,$join=null,$limit=null){
+        if($this->tableExist($tablename)){
+            
+            if($limit!=null){
+                $sql="SELECT * FROM $tablename";
+                if($where !=null){
+                    $sql .= " WHERE $where";
+                }
+                if($join!=null){
+                    $sql .= " JOIN $join";
+                }
+                $data=$this->mysqli->query($sql);
+            
+                if($data->num_rows>0){
+                    $totalrecord=$data->num_rows;
+                    $total_pages=ceil($totalrecord/$limit);
+                    $url=basename($_SERVER['PHP_SELF']);
+                    if(isset($_GET['page'])){
+                        $pageno=$_GET['page'];
+                    }else{
+                        $pageno=1;
+                    }
+                    $start=($pageno-1)*$limit;
+                    $sql.= " Limit {$start},{$limit} ";
+
+                    $out=$this->mysqli->query($sql);
+
+                    $output = "<ul class='pagination'>";
+                    if($totalrecord>$limit){
+                        if($pageno>1){
+                            $output .= "<li class='page-item'><a href='$url?page=".($pageno-1)."'>Previous</a></li>";
+                        }
+                        for($i=1;$i<=$total_pages;$i++){
+                            if($i==$pageno){
+                                $cls="class='page-link active bg-primary text-white'";
+                            }else{
+                                $cls="page-link text-dark";
+                            }
+                            $output .= "<li class='page-item'><a href='$url?page=$i' $cls>$i</a></li>";
+                        }
+                        if($total_pages > $pageno ){
+                            $output .= "<li class='page-item'><a href='$url?page=".($pageno+1)."'>Next</a></li>";
+                        }
+                    }
+                    $output .= "</ul>";
+                    echo $output;
+                    $data=$out->fetch_all(MYSQLI_ASSOC);
+                    echo "<pre>";
+                    print_r($data);
+                }
+                return true;
+            }else{
+                echo "please Enter valid details";
+            }
+        }else{
+            array_push($this->result,["msg"=>"Data not found"]);
+            return false;
+        }
+    }
     public function sql($sql){
         $query=$this->mysqli->query($sql);
         if($query){
