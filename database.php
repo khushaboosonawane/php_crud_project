@@ -67,6 +67,62 @@ class Database{
             array_push($this->result,$this->mysqli->error);
         }
     }
+    public function delete(string $tablename,string $where=null){
+        if($this->tableExist($tablename)){
+            $sql="DELETE FROM $tablename";
+            if($where !=null){
+                $sql .= " WHERE $where";
+            }
+            if($this->mysqli->query($sql)){
+                array_push($this->result,$this->mysqli->affected_rows);
+                return true;
+            }else{
+                array_push($this->result,$this->mysqli->error);
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+    public function select(string $tablename,string $row="*",string $where=null,string $join=null,string $order=null,$limit=null){
+        if($this->tableExist($tablename)){
+            $sql="SELECT $row from $tablename";
+            if($where!=null){
+                $sql .= " WHERE $where";
+            }
+            if($join!=null){
+                $sql .= " JOIN $join";
+            }
+            if($order!=null){
+                $sql .= " ORDER BY $order ";
+            }
+            if($limit != null){
+                $sql .= " LIMIT 0,$limit";
+            }
+            $data=$this->mysqli->query($sql);
+            if($data){
+                array_push($this->result,$data->fetch_all(MYSQLI_ASSOC));
+                return true;
+            }else{
+                array_push($this->result,$this->mysqli->error);
+                return false;
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public function sql($sql){
+        $query=$this->mysqli->query($sql);
+        if($query){
+            array_push($this->result,$query->fetch_all(MYSQLI_ASSOC));
+            return true;
+        }else{
+            array_push($this->result,$this->mysqli->error);
+            return false;
+        }
+    }
     public function getResult(){
         $val=$this->result;
         $this->result=array();
